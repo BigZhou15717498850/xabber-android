@@ -40,16 +40,19 @@ public enum ConnectionState {
 
     /**
      * Connection was established, registration is in progress.
+     * 链接已经建立，正在登记
      */
     registration,
 
     /**
      * Connection was established, authentication is in progress.
+     * 链接已经建立，正在认证
      */
     authentication,
 
     /**
      * Authorized connection has been established.
+     * 认证完成的链接已经建立
      */
     connected;
 

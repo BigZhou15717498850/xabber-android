@@ -18,7 +18,7 @@ import java.util.Date;
 
 /**
  * Holder for listener to be notified about packet delivery.
- *
+ * 消息包传送是否超时
  * @author alexander.ivanov
  */
 public class RequestHolder {

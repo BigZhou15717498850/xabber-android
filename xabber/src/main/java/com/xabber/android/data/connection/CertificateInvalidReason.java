@@ -18,6 +18,7 @@ import com.xabber.android.R;
 
 /**
  * Possible reasons for certificate invalidation.
+ * 证书失效的可能原因
  *
  * @author alexander.ivanov
  */

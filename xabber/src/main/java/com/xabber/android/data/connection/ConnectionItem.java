@@ -51,6 +51,7 @@ public abstract class ConnectionItem {
 
     /**
      * Whether force reconnection is in progress.
+     * 是否在进行强制重连
      */
     private boolean disconnectionRequested;
 
@@ -111,7 +112,8 @@ public abstract class ConnectionItem {
 
     /**
      * Returns real full jid, that was assigned while login.
-     *
+     * 返回一个jid,在登陆的时候赋予
+     * 如果链接没有成功则返回空值
      * @return <code>null</code> if connection is not established.
      */
     public String getRealJid() {
@@ -131,6 +133,7 @@ public abstract class ConnectionItem {
     }
 
     /**
+     * 判断链接是否可用
      * @param userRequest action was requested by user.
      * @return Whether connection is available.
      */
@@ -140,14 +143,14 @@ public abstract class ConnectionItem {
 
     /**
      * Connect or disconnect from server depending on internal flags.
-     *
+     * 链接或者失去链接基于本地的flags
      * @param userRequest action was requested by user.
-     * @return Whether state has been changed.
+     * @return Whether state has been changed.是否状态已经改变了
      */
     public boolean updateConnection(boolean userRequest) {
         boolean available = isConnectionAvailable(userRequest);
         if (NetworkManager.getInstance().getState() != NetworkState.available
-                || !available || disconnectionRequested) {
+                || !available || disconnectionRequested) { //如果没有网络，那么只存在两种状态，等待或者离线
             ConnectionState target = available ? ConnectionState.waiting : ConnectionState.offline;
             if (state == ConnectionState.connected || state == ConnectionState.authentication
                     || state == ConnectionState.connecting) {
@@ -166,7 +169,7 @@ public abstract class ConnectionItem {
             state = target;
             return true;
         } else {
-            if (state == ConnectionState.offline || state == ConnectionState.waiting) {
+            if (state == ConnectionState.offline || state == ConnectionState.waiting) { //如果有网络，且没有连上
                 if (userRequest) {
                     isConnectionRequestedByUser = true;
                 }
@@ -186,11 +189,11 @@ public abstract class ConnectionItem {
                     useSRVLookup = true;
                 }
 
-                connectionThread.start(fullyQualifiedDomainName, port, useSRVLookup, registerNewAccount);
+                connectionThread.start(fullyQualifiedDomainName, port, useSRVLookup, registerNewAccount); //开始链接
 
                 return true;
             } else {
-                return false;
+                return false; //如果状态不为离线或者等待，那么就不需要更新了
             }
         }
     }
@@ -199,7 +202,7 @@ public abstract class ConnectionItem {
      * Disconnect and connect using new connection.
      */
     public void forceReconnect() {
-        if (!getState().isConnectable()) {
+        if (!getState().isConnectable()) { //判断状态是否可用
             return;
         }
         disconnectionRequested = true;
@@ -258,12 +261,15 @@ public abstract class ConnectionItem {
 
     /**
      * Invalid certificate has been received.
+     * 接受了一个无效的证书
+     *
      */
     protected void onInvalidCertificate() {
     }
 
     /**
      * Connection has been established.
+     * 链接已经建立了
      */
     protected void onConnected(ConnectionThread connectionThread) {
         if (isRegisterAccount()) {
@@ -275,6 +281,7 @@ public abstract class ConnectionItem {
 
     /**
      * New account has been registered on XMPP server.
+     * 新账户已经注册完成，状态变为认证中
      */
     protected void onAccountRegistered(ConnectionThread connectionThread) {
         registerNewAccount = false;
@@ -285,12 +292,14 @@ public abstract class ConnectionItem {
 
     /**
      * Authorization failed.
+     * 认证失败
      */
     protected void onAuthFailed() {
     }
 
     /**
      * Authorization passed.
+     * 认证通过
      */
     protected void onAuthorized(ConnectionThread connectionThread) {
         if (isManaged(connectionThread)) {
@@ -300,6 +309,7 @@ public abstract class ConnectionItem {
 
     /**
      * Called when disconnect should occur.
+     * 当断开链接时调用
      *
      * @param connectionThread
      * @return <code>true</code> if connection thread was managed.
@@ -323,6 +333,7 @@ public abstract class ConnectionItem {
 
     /**
      * Called when connection was closed for some reason.
+     * 当链接因为一些原因关闭时调用
      */
     protected void onClose(ConnectionThread connectionThread) {
         if (onDisconnect(connectionThread)) {
@@ -337,7 +348,7 @@ public abstract class ConnectionItem {
 
     /**
      * Called when another host should be used.
-     *
+     * 需要使用另一个地址时使用
      * @param connectionThread
      * @param fqdn
      * @param port

@@ -36,7 +36,6 @@ import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-import org.jivesoftware.smackx.ping.PingFailedListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,6 +80,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
     /**
      * List of managed connection. Only managed connections can notify
      * registered listeners.
+     * 被管理的链接，
      */
     private final Collection<ConnectionThread> managedConnections;
     /**
@@ -98,6 +98,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
     public static ConnectionManager getInstance() {
         return instance;
     }
+
 
     @Override
     public void onInitialized() {
@@ -120,6 +121,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
      * Update connection state.
      * <p/>
      * Start connections in waiting states and stop invalidated connections.
+     * 更新链接状态
      *
      * @param userRequest
      */
@@ -150,6 +152,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
 
     /**
      * Send stanza to authenticated connection.
+     * 发送消息包
      *
      * @param account
      * @param stanza
@@ -180,7 +183,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
     /**
      * Send packet to authenticated connection. And notify listener about
      * acknowledgment.
-     *
+     * 发送一个请求，并通知观察者们
      * @param account
      * @param iq
      * @param listener
@@ -192,7 +195,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
         sendStanza(account, iq);
         requests.put(account, stanzaId, holder);
     }
-
+    //加入链接并通知
     public void onConnection(ConnectionThread connectionThread) {
         LogManager.i(this, "onConnection");
         managedConnections.add(connectionThread);
@@ -206,6 +209,7 @@ public class ConnectionManager implements OnInitializedListener, OnCloseListener
         if (!managedConnections.contains(connectionThread)) {
             return;
         }
+
         for (OnConnectedListener listener : Application.getInstance().getManagers(OnConnectedListener.class)) {
             listener.onConnected(connectionThread.getConnectionItem());
         }

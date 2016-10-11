@@ -78,6 +78,7 @@ public class ConnectionSettings {
      */
     private boolean compression;
 
+
     private ProxyType proxyType;
 
     private String proxyHost;
